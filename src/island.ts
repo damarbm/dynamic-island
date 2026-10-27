@@ -3,6 +3,7 @@ import GLib from 'gi://GLib';
 import St from 'gi://St';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
+import {Calendar} from './calendar.js';
 import {Graph, type Series} from './graph.js';
 
 /** How long the pointer must rest on the Pill before the Island expands. */
@@ -41,6 +42,8 @@ export class Island {
     private readonly _time: St.Label;
     private readonly _pillMetric: St.Label;
     private readonly _details: St.BoxLayout;
+    private readonly _metrics: St.BoxLayout;
+    private readonly _calendar: Calendar;
     private readonly _rows = new Map<RowId, Row>();
 
     private _expanded = false;
@@ -78,10 +81,18 @@ export class Island {
 
         this._details = new St.BoxLayout({
             style_class: 'dynamic-island-details',
-            vertical: true,
             visible: false,
             opacity: 0,
         });
+
+        this._calendar = new Calendar();
+        this._metrics = new St.BoxLayout({
+            style_class: 'dynamic-island-metrics',
+            vertical: true,
+            y_align: Clutter.ActorAlign.START,
+        });
+        this._details.add_child(this._calendar.actor);
+        this._details.add_child(this._metrics);
 
         const specs: Record<RowId, RowSpec> = {
             cpu: {name: 'CPU', graph: {capacity: _options.historyCapacity, fixedMax: 100, minMax: 100}},
@@ -189,7 +200,7 @@ export class Island {
         const box = new St.BoxLayout({style_class: 'dynamic-island-row', vertical: true});
         box.add_child(header);
         box.add_child(graph.actor);
-        this._details.add_child(box);
+        this._metrics.add_child(box);
 
         return {box, value, graph};
     }
@@ -223,6 +234,7 @@ export class Island {
         this._expanded = true;
         this._collapsing = false;
         this._options.onExpandedChanged(true);
+        this._calendar.reset();
 
         const [fromWidth, fromHeight] = this._actor.get_size();
 
