@@ -1,8 +1,8 @@
-## Summary
+# Summary
 
 Adds a calendar to the Expanded View and shows the date in the Pill. The default Pill Metric changes from CPU to network speed. Adds `make watch` for rebuilding and restarting a nested GNOME Shell on save.
 
-## Changes
+# Changes
 
 - `src/calendar.ts`: new month calendar with the full date, a month header with previous/next buttons, a Sunday-first grid, and today highlighted.
 - `src/island.ts`: the Expanded View is now two columns, the calendar on the left and the CPU, RAM and network graphs on the right. The calendar resets to the current month each time the Island expands.
@@ -14,7 +14,7 @@ Adds a calendar to the Expanded View and shows the date in the Pill. The default
 - `README.md`, `Makefile`, `package.json`: document and wire up the new commands and defaults.
 - `.github/pull_request_template.md`: this template.
 
-## Type of change
+# Type of change
 
 - [ ] Bug fix
 - [x] New feature
@@ -23,7 +23,7 @@ Adds a calendar to the Expanded View and shows the date in the Pill. The default
 - [ ] Documentation
 - [x] Build or tooling
 
-## How to test
+# How to test
 
 1. `npm install`, then `make dev` (nested shell) or `make deploy` and toggle the extension in your session.
 2. Hover over the Pill for about 300 ms and check the calendar and graphs appear side by side.
@@ -33,7 +33,7 @@ Adds a calendar to the Expanded View and shows the date in the Pill. The default
 
 Tested so far: `npm run typecheck` passes. Not yet tested in a running GNOME Shell 50 session.
 
-## Checklist
+# Checklist
 
 - [x] `npm run typecheck` passes
 - [ ] `npm test` passes (not changed, `src/proc.ts` is untouched)
