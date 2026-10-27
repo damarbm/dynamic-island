@@ -1,7 +1,7 @@
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 
-import {formatBytes, formatPercent, formatSpeed, formatTime} from './format.js';
+import {formatBytes, formatDate, formatPercent, formatSpeed, formatTime} from './format.js';
 import {RingBuffer} from './history.js';
 import {Island} from './island.js';
 import {Sampler, type Snapshot} from './sampler.js';
@@ -137,7 +137,8 @@ export class Controller {
     private _render(): void {
         const s = this._last;
 
-        this._island.setPill(formatTime(new Date()), this._pillMetricText(s));
+        const now = new Date();
+        this._island.setPill(`${formatDate(now)} · ${formatTime(now)}`, this._pillMetricText(s));
 
         this._island.setRow('cpu', formatPercent(s.cpuPercent), [
             {values: this._cpu.toArray(), color: CPU_COLOR, fill: true},

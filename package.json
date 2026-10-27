@@ -6,6 +6,7 @@
     "build": "node scripts/build.mjs",
     "typecheck": "tsc --noEmit",
     "test": "node --test test/*.test.ts",
+    "watch": "node scripts/watch.mjs",
     "deploy": "npm run build && scripts/install.sh"
   },
   "keywords": [],

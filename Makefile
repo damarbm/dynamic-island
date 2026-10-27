@@ -1,6 +1,6 @@
 UUID := dynamic-island@damar.local
 
-.PHONY: dev run deploy
+.PHONY: dev run deploy watch
 
 # Build, install, then open a fresh nested GNOME Shell with the extension enabled.
 dev: deploy run
@@ -13,3 +13,8 @@ run:
 # Build and copy the extension into ~/.local/share/gnome-shell/extensions.
 deploy:
 	npm run deploy
+
+# Rebuild and restart the nested GNOME Shell whenever src/ or static/ changes.
+# Only the nested shell is restarted, never your real session.
+watch:
+	node scripts/watch.mjs

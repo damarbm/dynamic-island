@@ -1,15 +1,15 @@
 # Dynamic Island
 
-A GNOME Shell extension that puts a compact widget at the center of the top bar. The collapsed **Pill** shows the time and one live system **Metric**. Hover over it and it expands into the **Expanded View**, with graphs for CPU, RAM and network speed.
+A GNOME Shell extension that puts a compact widget at the center of the top bar. The collapsed **Pill** shows the date, time and one live system **Metric**. Hover over it and it expands into the **Expanded View**, with graphs for CPU, RAM and network speed.
 
 It is inspired by the Dynamic Island on recent iPhones, and it covers the default clock in the top bar while it is enabled.
 
 ## Features
 
-- **Pill**: shows the current time and one Metric (CPU, RAM, or network speed).
+- **Pill**: shows the date, current time and one Metric (CPU, RAM, or network speed).
 - **Expanded View**: hover for about 300 ms to expand it into live graphs for CPU usage, RAM usage, and network download/upload speed. Move the pointer away to collapse it.
 - **Rolling History**: the last 2 minutes of samples are recorded in the background, so the graphs are already full when the Expanded View opens.
-- **Choice of Pill Metric**: pick which Metric the Pill shows (CPU by default) from the extension's preferences.
+- **Choice of Pill Metric**: pick which Metric the Pill shows (network speed by default) from the extension's preferences.
 - **Low overhead**: samples every 2 seconds while collapsed and every second while expanded. Sampling pauses while the screen is locked or blanked.
 
 ## Requirements
@@ -48,6 +48,8 @@ make dev
 
 This deploys the latest build and starts `gnome-shell --devkit --wayland` in a D-Bus session. A running shell only scans for extensions when it starts, so run `make deploy` again after changing the code if you are not using `make dev`.
 
+To rebuild and restart the nested shell automatically whenever `src/` or `static/` changes, run `make watch`. It only kills the nested shell it started, never your real session.
+
 Other scripts from `package.json`:
 
 | Command           | What it does                                  |
@@ -60,7 +62,7 @@ Other scripts from `package.json`:
 
 Open the extension's preferences to change:
 
-- **Pill Metric**: the Metric shown in the Pill next to the time (CPU usage, RAM usage, or Network speed). The default is CPU usage.
+- **Pill Metric**: the Metric shown in the Pill next to the time (CPU usage, RAM usage, or Network speed). The default is Network speed.
 
 The setting is stored in the `org.gnome.shell.extensions.dynamic-island` GSettings schema under the key `pill-metric`.
 

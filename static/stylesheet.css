@@ -27,7 +27,11 @@
 }
 
 .dynamic-island-details {
-  padding: 10px 16px 14px 16px;
+  padding: 14px 16px 14px 16px;
+  spacing: 20px;
+}
+
+.dynamic-island-metrics {
   spacing: 10px;
   min-width: 260px;
 }
@@ -48,4 +52,66 @@
 
 .dynamic-island-graph {
   height: 34px;
+}
+
+.dynamic-island-calendar {
+  spacing: 4px;
+  min-width: 250px;
+}
+
+.dynamic-island-cal-weekday {
+  color: #9b9b9d;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.dynamic-island-cal-date {
+  color: #9b9b9d;
+  font-weight: bold;
+  font-size: 1.5em;
+  padding-bottom: 8px;
+}
+
+.dynamic-island-cal-nav {
+  padding-bottom: 4px;
+}
+
+.dynamic-island-cal-month {
+  font-weight: bold;
+}
+
+.dynamic-island-cal-button {
+  color: #ffffff;
+  border-radius: 99px;
+  width: 24px;
+  height: 24px;
+  font-weight: bold;
+}
+
+.dynamic-island-cal-button:hover,
+.dynamic-island-cal-button:focus {
+  background-color: #4a4a4f;
+}
+
+.dynamic-island-cal-header {
+  color: #9b9b9d;
+  font-size: 0.8em;
+  padding: 4px 0;
+}
+
+.dynamic-island-cal-day {
+  font-feature-settings: "tnum";
+  border-radius: 100px;
+  width: 30px;
+  height: 30px;
+}
+
+.dynamic-island-cal-other {
+  color: #6b6b6e;
+}
+
+.dynamic-island-cal-today {
+  background-color: #e95420;
+  color: #ffffff;
+  font-weight: bold;
 }

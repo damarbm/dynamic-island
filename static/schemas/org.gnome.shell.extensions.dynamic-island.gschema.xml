@@ -8,7 +8,7 @@
         <choice value="ram"/>
         <choice value="network"/>
       </choices>
-      <default>'cpu'</default>
+      <default>'network'</default>
       <summary>Pill Metric</summary>
       <description>The Metric shown in the collapsed Pill next to the time.</description>
     </key>
