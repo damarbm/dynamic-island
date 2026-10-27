@@ -1,0 +1,51 @@
+/* Colors follow the Yaru-dark shell theme: the same fill and border as the
+   calendar and notification popups, and the same dimmed text color. */
+.dynamic-island {
+  background-color: #36363a;
+  border: 1px solid #424247;
+  border-radius: 18px;
+  color: #ffffff;
+}
+
+.dynamic-island-pill {
+  padding: 0 14px;
+  spacing: 8px;
+  height: 28px;
+}
+
+.dynamic-island-time {
+  font-weight: bold;
+  font-feature-settings: "tnum";
+}
+
+.dynamic-island-separator {
+  color: #9b9b9d;
+}
+
+.dynamic-island-pill-metric {
+  font-feature-settings: "tnum";
+}
+
+.dynamic-island-details {
+  padding: 10px 16px 14px 16px;
+  spacing: 10px;
+  min-width: 260px;
+}
+
+.dynamic-island-row {
+  spacing: 4px;
+}
+
+.dynamic-island-row-name {
+  color: #9b9b9d;
+  font-size: 0.85em;
+}
+
+.dynamic-island-row-value {
+  font-weight: bold;
+  font-feature-settings: "tnum";
+}
+
+.dynamic-island-graph {
+  height: 34px;
+}

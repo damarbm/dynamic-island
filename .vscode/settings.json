@@ -1,0 +1,8 @@
+{
+  // GNOME Shell's St toolkit adds CSS properties such as `spacing` that the
+  // standard CSS linter does not know about.
+  "css.lint.unknownProperties": "ignore",
+  // Allow downloading schemas from schemastore.org for package.json and
+  // tsconfig.json validation.
+  "json.schemaDownload.enable": true
+}

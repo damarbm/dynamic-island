@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.dynamic-island"
+          path="/org/gnome/shell/extensions/dynamic-island/">
+    <key name="pill-metric" type="s">
+      <choices>
+        <choice value="cpu"/>
+        <choice value="ram"/>
+        <choice value="network"/>
+      </choices>
+      <default>'cpu'</default>
+      <summary>Pill Metric</summary>
+      <description>The Metric shown in the collapsed Pill next to the time.</description>
+    </key>
+  </schema>
+</schemalist>
