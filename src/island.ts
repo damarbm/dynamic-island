@@ -235,6 +235,7 @@ export class Island {
         this._collapsing = false;
         this._options.onExpandedChanged(true);
         this._calendar.reset();
+        this._actor.add_style_class_name('dynamic-island-open');
 
         const [fromWidth, fromHeight] = this._actor.get_size();
 
@@ -267,6 +268,7 @@ export class Island {
         this._options.onExpandedChanged(false);
 
         this._collapsing = true;
+        this._actor.remove_style_class_name('dynamic-island-open');
 
         // Measure the collapsed card, border included, by briefly hiding the
         // Expanded View. Nothing is drawn between hiding and restoring.

@@ -1,10 +1,18 @@
 /* Colors follow the Yaru-dark shell theme: the same fill and border as the
    calendar and notification popups, and the same dimmed text color. */
 .dynamic-island {
-  background-color: #36363a;
-  border: 1px solid #424247;
+  /* The border stays transparent when collapsed so the card keeps its size. */
+  /* Same RGB as the open state, so the fade doesn't pass through black. */
+  background-color: rgba(54, 54, 58, 0);
+  border: 1px solid rgba(66, 66, 71, 0);
   border-radius: 18px;
   color: #ffffff;
+  transition-duration: 250ms;
+}
+
+.dynamic-island-open {
+  background-color: #36363a;
+  border: 1px solid #424247;
 }
 
 .dynamic-island-pill {
