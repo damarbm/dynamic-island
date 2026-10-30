@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import {formatBytes, formatPercent, formatSpeed, formatTime} from '../src/format.ts';
-import {RingBuffer} from '../src/history.ts';
+import {formatBytes, formatPercent, formatSpeed, formatTime} from '../src/util/format.ts';
+import {RingBuffer} from '../src/metrics/history.ts';
 import {
     parseCpuStat,
     parseDefaultRouteInterface,
     parseMemInfo,
     parseNetDev,
-} from '../src/proc.ts';
+} from '../src/metrics/proc.ts';
 
 test('parseCpuStat splits busy from idle time', () => {
     const t = parseCpuStat('cpu  100 10 50 800 40 5 5 0 0 0\ncpu0 1 1 1 1 1 1 1 0 0 0\n');

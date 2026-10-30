@@ -36,12 +36,49 @@
 
 .dynamic-island-details {
   padding: 14px 16px 14px 16px;
-  spacing: 20px;
+}
+
+.dynamic-island-tab-view {
+  spacing: 12px;
+}
+
+.dynamic-island-tabs {
+  spacing: 4px;
+  padding: 3px;
+  background-color: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+}
+
+.dynamic-island-tab {
+  padding: 7px 12px;
+  border-radius: 9px;
+  color: #9b9b9d;
+}
+
+.dynamic-island-tab:hover,
+.dynamic-island-tab:focus {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.dynamic-island-tab-active,
+.dynamic-island-tab-active:hover,
+.dynamic-island-tab-active:focus {
+  color: #ffffff;
+  background-color: #4a4a4f;
+}
+
+.dynamic-island-tab-label {
+  spacing: 6px;
+}
+
+.dynamic-island-tab-content {
+  min-width: 300px;
+  min-height: 300px;
 }
 
 .dynamic-island-metrics {
   spacing: 10px;
-  min-width: 260px;
 }
 
 .dynamic-island-row {

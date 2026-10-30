@@ -27,16 +27,16 @@ Since GNOME 45, extensions are **ES modules**, which is why the files use `impor
 
 ### The imports you will see
 
-| Import | What it is |
-| --- | --- |
-| `gi://St` | **St** (Shell Toolkit): the widget library GNOME Shell itself is built with. Labels, boxes, and so on. Styled with CSS. |
-| `gi://Clutter` | **Clutter**: the scene graph under St. Handles actors, positions, and animations (`ease`). |
-| `gi://GLib` | Core utilities: timers (`timeout_add`), monotonic time, reading files, the main loop. |
-| `gi://Gio` | I/O: GSettings, D-Bus, files. |
-| `gi://Gtk`, `gi://Adw` | **GTK 4** and **libadwaita**. Used only in the preferences window. |
-| `resource:///org/gnome/shell/ui/main.js` | GNOME Shell's own internal modules. Exposes `Main.panel`, `Main.layoutManager`, and so on. |
-| `resource:///org/gnome/shell/extensions/extension.js` | The `Extension` base class your extension extends. |
-| `resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js` | The `ExtensionPreferences` base class for the settings window. |
+| Import                                                          | What it is                                                                                                              |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `gi://St`                                                       | **St** (Shell Toolkit): the widget library GNOME Shell itself is built with. Labels, boxes, and so on. Styled with CSS. |
+| `gi://Clutter`                                                  | **Clutter**: the scene graph under St. Handles actors, positions, and animations (`ease`).                              |
+| `gi://GLib`                                                     | Core utilities: timers (`timeout_add`), monotonic time, reading files, the main loop.                                   |
+| `gi://Gio`                                                      | I/O: GSettings, D-Bus, files.                                                                                           |
+| `gi://Gtk`, `gi://Adw`                                          | **GTK 4** and **libadwaita**. Used only in the preferences window.                                                      |
+| `resource:///org/gnome/shell/ui/main.js`                        | GNOME Shell's own internal modules. Exposes `Main.panel`, `Main.layoutManager`, and so on.                              |
+| `resource:///org/gnome/shell/extensions/extension.js`           | The `Extension` base class your extension extends.                                                                      |
+| `resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js` | The `ExtensionPreferences` base class for the settings window.                                                          |
 
 The `gi://` prefix means **GObject Introspection**. It is how GJS talks to C libraries. `gi://Clutter` means "the Clutter library".
 
@@ -165,23 +165,23 @@ Everything you edit lives here. It is TypeScript, which is JavaScript with types
 
 Files that do not need compiling. The build copies them into `dist/`:
 
-| File | Purpose |
-| --- | --- |
-| `metadata.json` | Identifies the extension to GNOME Shell (see Part 5). |
-| `stylesheet.css` | Visual styling for the Island. |
-| `schemas/*.gschema.xml` | Declares the settings keys (see Part 5). |
+| File                    | Purpose                                               |
+| ----------------------- | ----------------------------------------------------- |
+| `metadata.json`         | Identifies the extension to GNOME Shell (see Part 5). |
+| `stylesheet.css`        | Visual styling for the Island.                        |
+| `schemas/*.gschema.xml` | Declares the settings keys (see Part 5).              |
 
 ### `scripts/`: build and install
 
-| File | Purpose |
-| --- | --- |
-| `build.mjs` | Bundles `src/` into `dist/` with esbuild, copies `static/`, and compiles the schema. |
-| `install.sh` | Copies `dist/` into `~/.local/share/gnome-shell/extensions/<uuid>/`. |
+| File         | Purpose                                                                              |
+| ------------ | ------------------------------------------------------------------------------------ |
+| `build.mjs`  | Bundles `src/` into `dist/` with esbuild, copies `static/`, and compiles the schema. |
+| `install.sh` | Copies `dist/` into `~/.local/share/gnome-shell/extensions/<uuid>/`.                 |
 
 ### `test/`: unit tests
 
-| File | Purpose |
-| --- | --- |
+| File           | Purpose                                                      |
+| -------------- | ------------------------------------------------------------ |
 | `proc.test.ts` | Tests for the `/proc` parsers, formatters, and `RingBuffer`. |
 
 Tests run with plain Node, not GNOME. This works because the tested modules never import `gi://` or `resource:///`. See Part 7.
@@ -203,15 +203,15 @@ Installed by `npm install`. The `@girs/*` packages are **type definitions only**
 
 ## Part 5: The root files
 
-| File | Purpose |
-| --- | --- |
-| `static/metadata.json` | The extension's identity. Copied into `dist/`. See below. |
-| `package.json` | npm project file. Defines the scripts (`build`, `typecheck`, `test`, `deploy`) and dev dependencies. |
-| `package-lock.json` | Pins exact dependency versions. Do not edit by hand. |
-| `tsconfig.json` | TypeScript compiler settings. Used by `npm run typecheck`. |
-| `Makefile` | Shortcuts for the common workflows (`make deploy`, `make dev`). |
-| `README.md` | User-facing overview: features, install steps, and how it works. |
-| `.gitignore` | Tells git to ignore `node_modules/` and `dist/`. |
+| File                   | Purpose                                                                                              |
+| ---------------------- | ---------------------------------------------------------------------------------------------------- |
+| `static/metadata.json` | The extension's identity. Copied into `dist/`. See below.                                            |
+| `package.json`         | npm project file. Defines the scripts (`build`, `typecheck`, `test`, `deploy`) and dev dependencies. |
+| `package-lock.json`    | Pins exact dependency versions. Do not edit by hand.                                                 |
+| `tsconfig.json`        | TypeScript compiler settings. Used by `npm run typecheck`.                                           |
+| `Makefile`             | Shortcuts for the common workflows (`make deploy`, `make dev`).                                      |
+| `README.md`            | User-facing overview: features, install steps, and how it works.                                     |
+| `.gitignore`           | Tells git to ignore `node_modules/` and `dist/`.                                                     |
 
 ### `metadata.json`
 
@@ -232,11 +232,11 @@ Settings worth knowing:
 
 ### `Makefile`
 
-| Target | What it does |
-| --- | --- |
-| `make deploy` | Builds and installs the extension (`npm run deploy`). |
-| `make run` | Starts a nested GNOME Shell with the extension enabled. |
-| `make dev` | `deploy` then `run`. The fastest loop while developing. |
+| Target        | What it does                                            |
+| ------------- | ------------------------------------------------------- |
+| `make deploy` | Builds and installs the extension (`npm run deploy`).   |
+| `make run`    | Starts a nested GNOME Shell with the extension enabled. |
+| `make dev`    | `deploy` then `run`. The fastest loop while developing. |
 
 ---
 
@@ -377,14 +377,14 @@ schema    ──glib-compile-schemas──▶  dist/schemas/gschemas.compiled
 
 ### Commands
 
-| Command | What it does |
-| --- | --- |
-| `npm install` | Installs dependencies. Run once after cloning. |
-| `npm run build` | Builds `dist/`. |
-| `npm run typecheck` | Checks types without producing output. |
-| `npm test` | Runs the unit tests in `test/`. |
-| `make deploy` | Builds and installs into your extensions folder. |
-| `make dev` | Deploys, then starts a nested GNOME Shell with the extension enabled. |
+| Command             | What it does                                                          |
+| ------------------- | --------------------------------------------------------------------- |
+| `npm install`       | Installs dependencies. Run once after cloning.                        |
+| `npm run build`     | Builds `dist/`.                                                       |
+| `npm run typecheck` | Checks types without producing output.                                |
+| `npm test`          | Runs the unit tests in `test/`.                                       |
+| `make deploy`       | Builds and installs into your extensions folder.                      |
+| `make dev`          | Deploys, then starts a nested GNOME Shell with the extension enabled. |
 
 ### Testing safely
 

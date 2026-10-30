@@ -1,10 +1,10 @@
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 
-import {formatBytes, formatDate, formatPercent, formatSpeed, formatTime} from './format.js';
-import {RingBuffer} from './history.js';
-import {Island} from './island.js';
-import {Sampler, type Snapshot} from './sampler.js';
+import {RingBuffer} from '../metrics/history.js';
+import {Sampler, type Snapshot} from '../metrics/sampler.js';
+import {Island} from '../ui/island.js';
+import {formatBytes, formatDate, formatPercent, formatSpeed, formatTime} from '../util/format.js';
 
 /** The Pill refreshes this often while the Island is collapsed. */
 const COLLAPSED_INTERVAL_MS = 2000;
