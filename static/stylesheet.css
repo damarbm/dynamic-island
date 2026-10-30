@@ -17,8 +17,17 @@
 
 .dynamic-island-pill {
   padding: 0 14px;
-  spacing: 8px;
   height: 28px;
+  border: 2px solid transparent;
+  border-radius: 14px;
+}
+
+.dynamic-island-pill-content {
+  spacing: 8px;
+}
+
+.dynamic-island-pill:focus {
+  border-color: #ffffff;
 }
 
 .dynamic-island-time {
@@ -51,6 +60,7 @@
 
 .dynamic-island-tab {
   padding: 7px 12px;
+  border: 2px solid transparent;
   border-radius: 9px;
   color: #9b9b9d;
 }
@@ -66,6 +76,10 @@
 .dynamic-island-tab-active:focus {
   color: #ffffff;
   background-color: #4a4a4f;
+}
+
+.dynamic-island-tab:focus {
+  border-color: #ffffff;
 }
 
 .dynamic-island-tab-label {
@@ -127,6 +141,7 @@
 
 .dynamic-island-cal-button {
   color: #ffffff;
+  border: 2px solid transparent;
   border-radius: 99px;
   width: 24px;
   height: 24px;
@@ -136,6 +151,10 @@
 .dynamic-island-cal-button:hover,
 .dynamic-island-cal-button:focus {
   background-color: #4a4a4f;
+}
+
+.dynamic-island-cal-button:focus {
+  border-color: #ffffff;
 }
 
 .dynamic-island-cal-header {
