@@ -1,8 +1,10 @@
+import Atk from 'gi://Atk';
 import Clutter from 'gi://Clutter';
 import GLib from 'gi://GLib';
 import St from 'gi://St';
 
 const WEEKDAY_LETTERS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const WEEKS_SHOWN = 6;
 
 /**
@@ -26,8 +28,8 @@ export class Calendar {
         this._weekday = new St.Label({style_class: 'dynamic-island-cal-weekday'});
         this._fullDate = new St.Label({style_class: 'dynamic-island-cal-date'});
 
-        const prev = this._navButton('‹', -1);
-        const next = this._navButton('›', 1);
+        const prev = this._navButton('‹', 'Previous month', -1);
+        const next = this._navButton('›', 'Next month', 1);
         this._monthLabel = new St.Label({
             style_class: 'dynamic-island-cal-month',
             x_expand: true,
@@ -39,8 +41,17 @@ export class Calendar {
         nav.add_child(this._monthLabel);
         nav.add_child(next);
 
-        const grid = new St.BoxLayout({style_class: 'dynamic-island-cal-grid', vertical: true});
-        grid.add_child(this._buildRow(WEEKDAY_LETTERS, 'dynamic-island-cal-header'));
+        const grid = new St.BoxLayout({
+            style_class: 'dynamic-island-cal-grid',
+            accessible_name: 'Month calendar',
+            accessible_role: Atk.Role.TABLE,
+            vertical: true,
+        });
+        grid.add_child(this._buildRow(
+            WEEKDAY_LETTERS,
+            'dynamic-island-cal-header',
+            WEEKDAY_NAMES,
+        ));
         for (let week = 0; week < WEEKS_SHOWN; week++) {
             const row = new St.BoxLayout({style_class: 'dynamic-island-cal-row'});
             for (let day = 0; day < 7; day++) {
@@ -52,6 +63,7 @@ export class Calendar {
                 });
                 const circle = new St.Bin({
                     style_class: 'dynamic-island-cal-day',
+                    accessible_role: Atk.Role.TABLE_CELL,
                     x_align: Clutter.ActorAlign.CENTER,
                     child: label,
                 });
@@ -64,6 +76,8 @@ export class Calendar {
 
         this.actor = new St.BoxLayout({
             style_class: 'dynamic-island-calendar',
+            accessible_name: 'Calendar',
+            accessible_role: Atk.Role.PANEL,
             vertical: true,
             x_expand: true,
             y_expand: true,
@@ -88,10 +102,11 @@ export class Calendar {
         return GLib.DateTime.new_local(date.get_year(), date.get_month(), 1, 0, 0, 0) ?? date;
     }
 
-    private _navButton(label: string, delta: number): St.Button {
+    private _navButton(label: string, accessibleName: string, delta: number): St.Button {
         const button = new St.Button({
             label,
             style_class: 'dynamic-island-cal-button',
+            accessible_name: accessibleName,
             can_focus: true,
             y_align: Clutter.ActorAlign.CENTER,
         });
@@ -102,12 +117,17 @@ export class Calendar {
         return button;
     }
 
-    private _buildRow(texts: string[], styleClass: string): St.BoxLayout {
+    private _buildRow(
+        texts: string[],
+        styleClass: string,
+        accessibleTexts: string[] = texts,
+    ): St.BoxLayout {
         const row = new St.BoxLayout({style_class: 'dynamic-island-cal-row'});
-        for (const text of texts) {
+        for (let index = 0; index < texts.length; index++) {
             row.add_child(new St.Label({
-                text,
+                text: texts[index],
                 style_class: styleClass,
+                accessible_name: accessibleTexts[index],
                 x_expand: true,
                 x_align: Clutter.ActorAlign.CENTER,
             }));
@@ -123,6 +143,7 @@ export class Calendar {
         const shown = this._shown;
         const sameYear = shown.get_year() === now.get_year();
         this._monthLabel.text = shown.format(sameYear ? '%B' : '%B %Y') ?? '';
+        this._monthLabel.accessible_name = this._monthLabel.text;
 
         // get_day_of_week is 1 (Monday) to 7 (Sunday); the grid starts on Sunday.
         const offset = shown.get_day_of_week() % 7;
@@ -131,11 +152,15 @@ export class Calendar {
             const day = start.add_days(i) ?? start;
             const {circle, label} = this._cells[i];
             label.text = day.format('%d') ?? '';
+            const isToday = day.get_year() === now.get_year() &&
+                day.get_day_of_year() === now.get_day_of_year();
+            const dateName = day.format('%A, %B %-d, %Y') ?? label.text;
+            circle.accessible_name = isToday ? `${dateName}, today` : dateName;
 
             const classes = ['dynamic-island-cal-day'];
             if (day.get_month() !== shown.get_month())
                 classes.push('dynamic-island-cal-other');
-            if (day.get_year() === now.get_year() && day.get_day_of_year() === now.get_day_of_year())
+            if (isToday)
                 classes.push('dynamic-island-cal-today');
             circle.style_class = classes.join(' ');
         }
