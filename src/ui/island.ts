@@ -339,11 +339,17 @@ export class Island {
     }
 
     private _onKeyFocusChanged(): void {
-        if (!this._keyboardOpen && !this._clickOpen)
-            return;
-
         const focus = global.stage.get_key_focus();
-        if (focus && (focus === this._actor || this._actor.contains(focus)))
+        const focusInside = focus && (focus === this._actor || this._actor.contains(focus));
+        if (focusInside) {
+            // Pointer-activated controls do not take focus automatically in St.
+            // Once a control explicitly receives focus, keep the Island open.
+            if (this._expanded && focus !== this._pill)
+                this._keyboardOpen = true;
+            return;
+        }
+
+        if (!this._keyboardOpen && !this._clickOpen)
             return;
 
         this._keyboardOpen = false;

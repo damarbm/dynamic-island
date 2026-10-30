@@ -65,7 +65,10 @@ export class TabView {
                 child: tabContent,
                 x_expand: true,
             });
-            button.connect('clicked', () => this.select(panel.id));
+            button.connect('clicked', () => {
+                this.select(panel.id);
+                button.grab_key_focus();
+            });
             button.connect('key-press-event',
                 (_actor, event) => this._onTabKeyPress(panel.id, event));
             this._buttons.set(panel.id, button);
