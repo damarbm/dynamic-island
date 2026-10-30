@@ -21,7 +21,7 @@ A single live system measurement shown by the Island: CPU usage, RAM usage, or n
 _Avoid_: Stat, widget, sensor
 
 **Pill Metric**:
-The one Metric the user has chosen to display in the Pill. Defaults to CPU.
+The one Metric the user has chosen to display in the Pill. Defaults to network speed.
 _Avoid_: Primary stat, default metric
 
 **History**:

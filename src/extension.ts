@@ -1,7 +1,7 @@
 import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
-import {Controller} from './controller.js';
+import {Controller} from './core/controller.js';
 
 export default class DynamicIslandExtension extends Extension {
     private _controller: Controller | null = null;

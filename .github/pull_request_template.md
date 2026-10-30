@@ -1,46 +1,46 @@
 # Summary
 
-Adds a calendar to the Expanded View and shows the date in the Pill. The default Pill Metric changes from CPU to network speed. Adds `make watch` for rebuilding and restarting a nested GNOME Shell on save.
+Replaces the permanent two-column Expanded View with a tab bar. The Expanded View now has a System tab (CPU, RAM and network graphs) and a Calendar tab. The source tree is reorganized into `core/`, `metrics/`, `ui/` and `util/` folders, and `docs/TAB_VIEW_PLAN.md` tracks the remaining tab work.
 
 # Changes
 
-- `src/calendar.ts`: new month calendar with the full date, a month header with previous/next buttons, a Sunday-first grid, and today highlighted.
-- `src/island.ts`: the Expanded View is now two columns, the calendar on the left and the CPU, RAM and network graphs on the right. The calendar resets to the current month each time the Island expands.
-- `src/format.ts`: new `formatDate` helper.
-- `src/controller.ts`: the Pill shows `Tue, Oct 27 · 10:17` before the Pill Metric.
-- `static/schemas/...gschema.xml`: default `pill-metric` changed from `cpu` to `network`.
-- `static/stylesheet.css`: styles for the calendar, the day circles, and the metrics column.
-- `scripts/watch.mjs` and `make watch` / `npm run watch`: rebuild and restart the nested shell when `src/` or `static/` changes. Only the nested shell started by the script is killed.
-- `README.md`, `Makefile`, `package.json`: document and wire up the new commands and defaults.
-- `.github/pull_request_template.md`: this template.
+- `src/ui/tab-view.ts`: new reusable `TabView` with icon tabs and a single-panel content area. Panels stay mounted so their state survives tab switches.
+- `src/ui/island.ts`: the Expanded View shows the `TabView` with System and Calendar panels instead of two columns. System is the default tab. The calendar still resets to the current month each time the Island expands.
+- `static/stylesheet.css`: styles for the tab bar, active and hover states, and a fixed content size so the Island doesn't change dimensions between tabs. The metrics column no longer has a fixed minimum width.
+- `src/core/controller.ts`: moved from `src/controller.ts`. Imports updated.
+- `src/metrics/` (`sampler.ts`, `proc.ts`, `history.ts`), `src/ui/` (`calendar.ts`, `graph.ts`) and `src/util/format.ts`: moved into folders. No logic changes.
+- `test/proc.test.ts`: imports updated for the new paths.
+- `README.md`: describes the tabbed Expanded View, the new project layout and the file paths in "How it works". The scripts table is re-aligned.
+- `docs/TAB_VIEW_PLAN.md`: new plan for the tabbed Expanded View, with the current implementation checked off and planned panels, architecture and settings listed.
+- `docs/ROADMAP.md`: new roadmap. Tabbed Expanded View is marked done.
+- `docs/OVERVIEW.md`: renamed from `docs/CONTEXT.md`, with one line changed.
+- `docs/GNOME_SHELL_GUIDE.md`: renamed from `docs/GNOME-SHELL-GUIDE.md`, with content updates.
 
 # Type of change
 
 - [ ] Bug fix
 - [x] New feature
-- [ ] Refactor or cleanup
-- [x] Styling only
-- [ ] Documentation
-- [x] Build or tooling
+- [x] Refactor or cleanup
+- [ ] Styling only
+- [x] Documentation
+- [ ] Build or tooling
 
 # How to test
 
 1. `npm install`, then `make dev` (nested shell) or `make deploy` and toggle the extension in your session.
-2. Hover over the Pill for about 300 ms and check the calendar and graphs appear side by side.
-3. Use `‹` and `›` to change month. Confirm today is highlighted and the day circles are centered.
-4. Confirm the Pill shows the date, time and network speed.
-5. Run `make watch`, edit `static/stylesheet.css` and confirm the nested shell restarts.
+2. Hover over the Pill for about 300 ms. The Expanded View should open on the System tab with the CPU, RAM and network graphs.
+3. Click the Calendar tab. Confirm the calendar shows, `‹` and `›` change month, and today is highlighted.
+4. Switch back to System and confirm the graphs keep their history. The Island should not change size between tabs.
+5. Move the pointer away, then hover again. The Island should reopen on the tab you last selected.
 
-Tested so far: `npm run typecheck` passes. Not yet tested in a running GNOME Shell 50 session.
+Tested so far: `npm run typecheck`, `npm test` (8 tests) and `npm run build` pass. Not yet tested in a running GNOME Shell 50 session.
 
 # Checklist
 
 - [x] `npm run typecheck` passes
-- [ ] `npm test` passes (not changed, `src/proc.ts` is untouched)
-- [ ] `npm run build` succeeds
+- [x] `npm test` passes
+- [x] `npm run build` succeeds
 - [ ] Tested on GNOME Shell 50
 - [ ] Screenshots or a screen recording attached for UI changes
 - [x] README or docs updated if behavior or settings changed
-- [x] GSettings schema changes come with a default that suits existing users
-
-Note for reviewers: users who already have `pill-metric` set to `cpu` in dconf keep CPU. The new default applies only when the key was never set.
+- [ ] GSettings schema changes come with a default that suits existing users

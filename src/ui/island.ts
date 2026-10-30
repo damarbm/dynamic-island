@@ -5,6 +5,7 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 import {Calendar} from './calendar.js';
 import {Graph, type Series} from './graph.js';
+import {TabView} from './tab-view.js';
 
 /** How long the pointer must rest on the Pill before the Island expands. */
 const EXPAND_DELAY_MS = 300;
@@ -81,6 +82,7 @@ export class Island {
 
         this._details = new St.BoxLayout({
             style_class: 'dynamic-island-details',
+            vertical: true,
             visible: false,
             opacity: 0,
         });
@@ -89,10 +91,11 @@ export class Island {
         this._metrics = new St.BoxLayout({
             style_class: 'dynamic-island-metrics',
             vertical: true,
-            y_align: Clutter.ActorAlign.START,
+            x_expand: true,
+            y_expand: true,
+            x_align: Clutter.ActorAlign.FILL,
+            y_align: Clutter.ActorAlign.FILL,
         });
-        this._details.add_child(this._calendar.actor);
-        this._details.add_child(this._metrics);
 
         const specs: Record<RowId, RowSpec> = {
             cpu: {name: 'CPU', graph: {capacity: _options.historyCapacity, fixedMax: 100, minMax: 100}},
@@ -102,6 +105,22 @@ export class Island {
         };
         for (const id of ['cpu', 'ram', 'network'] as const)
             this._rows.set(id, this._buildRow(specs[id]));
+
+        const tabs = new TabView([
+            {
+                id: 'system',
+                label: 'System',
+                iconName: 'utilities-system-monitor-symbolic',
+                actor: this._metrics,
+            },
+            {
+                id: 'calendar',
+                label: 'Calendar',
+                iconName: 'x-office-calendar-symbolic',
+                actor: this._calendar.actor,
+            },
+        ], 'system');
+        this._details.add_child(tabs.actor);
 
         this._actor = new St.BoxLayout({
             style_class: 'dynamic-island',

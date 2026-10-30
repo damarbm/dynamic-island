@@ -62,7 +62,14 @@ export class Calendar {
             grid.add_child(row);
         }
 
-        this.actor = new St.BoxLayout({style_class: 'dynamic-island-calendar', vertical: true});
+        this.actor = new St.BoxLayout({
+            style_class: 'dynamic-island-calendar',
+            vertical: true,
+            x_expand: true,
+            y_expand: true,
+            x_align: Clutter.ActorAlign.FILL,
+            y_align: Clutter.ActorAlign.FILL,
+        });
         this.actor.add_child(this._weekday);
         this.actor.add_child(this._fullDate);
         this.actor.add_child(nav);
