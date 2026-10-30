@@ -13,6 +13,8 @@ values, and close the Island without relying on hover.
   cannot open the Expanded View.
 - Expansion is controlled only by pointer hover. Moving focus into the Island
   would not keep it open, and there is no focus-restoration path when it closes.
+- Hover intentionally does not steal focus from the active application, but
+  there is no explicit pointer action that transfers focus into the Island.
 - Tab buttons are focusable and named, but they do not implement tab semantics,
   arrow-key navigation, Home/End navigation, or an exposed selected state.
 - Calendar navigation buttons are focusable but are named only `‹` and `›`.
@@ -26,6 +28,10 @@ values, and close the Island without relying on hover.
   `ArrowDown` opens the Expanded View and moves focus to the selected tab.
 - Track whether the Expanded View was opened by hover or by keyboard. A
   keyboard-opened Island remains open while the pointer is elsewhere.
+- Hover remains a focus-free preview. Clicking the Pill explicitly opens and
+  latches the Expanded View, then moves focus to the selected tab.
+- Clicking the Pill again closes a click-opened Island. `Escape` provides the
+  same close behavior and restores focus to the Pill.
 - `Tab` and `Shift+Tab` follow the normal focus order through the selected tab's
   controls. Hidden tab panels and their controls must not enter the focus order.
 - Within the tab list:
@@ -37,8 +43,8 @@ values, and close the Island without relying on hover.
 - If focus leaves the Island through normal `Tab` navigation, close a
   keyboard-opened Island without stealing focus back. Pointer hover may keep a
   hover-opened Island visible.
-- Pointer behavior remains unchanged: delayed hover opens the Island and
-  leaving it collapses an Island that is not being held open by keyboard focus.
+- Delayed hover still opens the Island, and leaving collapses it unless it was
+  latched open by a click or keyboard interaction.
 
 ## Implementation
 
@@ -69,7 +75,20 @@ values, and close the Island without relying on hover.
 - Ensure keyboard focus does not alter sizing or interfere with the existing
   width and expansion animations.
 
-### 3. Implement tab-list keyboard behavior
+### 3. Add click-to-focus behavior
+
+- Connect the Pill's `clicked` or equivalent pointer-activation signal without
+  treating ordinary hover as a focus request.
+- A click on a collapsed or hover-previewed Island must latch it open and move
+  focus to the selected tab so arrow-key navigation works immediately.
+- A second Pill click must release the click-open reason and collapse the
+  Island. It must not conflict with hover, keyboard, or in-progress animations.
+- Keep click-open state distinct from pointer hover so moving the pointer away
+  does not close an explicitly opened Island.
+- Clear click-open state on `Escape`, normal focus departure, and extension
+  destruction.
+
+### 4. Implement tab-list keyboard behavior
 
 - In `src/ui/tab-view.ts`, retain the ordered panel IDs in addition to the
   existing maps.
@@ -86,7 +105,7 @@ values, and close the Island without relying on hover.
   accessibility tree.
 - Preserve the current selected tab across close/reopen cycles.
 
-### 4. Name calendar controls and content
+### 5. Name calendar controls and content
 
 - In `src/ui/calendar.ts`, replace symbol-only accessibility names with
   `Previous month` and `Next month` while retaining the visible symbols.
@@ -96,7 +115,7 @@ values, and close the Island without relying on hover.
 - Give date cells unambiguous accessible labels including month, day, and year;
   identify today's date in its label or state.
 
-### 5. Expose Metrics without duplicating noise
+### 6. Expose Metrics without duplicating noise
 
 - In `src/ui/island.ts`, make each Metric row a named accessibility group and
   update its accessible description/name with the same formatted value shown
@@ -108,7 +127,7 @@ values, and close the Island without relying on hover.
   one-second sample automatically. Current values should be read when users
   navigate to or inspect the Metric group.
 
-### 6. Add focus styling
+### 7. Add focus styling
 
 - Add a clear keyboard focus treatment for the Pill, tabs, and calendar
   navigation buttons in `static/stylesheet.css`.
@@ -131,6 +150,12 @@ values, and close the Island without relying on hover.
   indicator and accessible name contain the current Pill information.
 - Open with `Enter`, `Space`, and `ArrowDown`; confirm focus lands on the
   selected tab and the Island stays open with the pointer elsewhere.
+- Hover the Pill while focus remains in another application; confirm the Island
+  previews without stealing focus.
+- Click the Pill from the hover preview; confirm it stays open after the pointer
+  leaves and keyboard focus moves to the selected tab.
+- Click the Pill again and press `Escape` in separate runs; confirm both close
+  paths work without leaving stale click-open state.
 - Navigate tabs with arrows and Home/End; confirm selection, visible panel,
   focus, and assistive-technology state remain synchronized.
 - Use `Tab`/`Shift+Tab` to reach Calendar navigation, activate both month
@@ -153,6 +178,8 @@ values, and close the Island without relying on hover.
 - Every interactive Island control is reachable, operable, and visibly focused
   using only the keyboard.
 - The Island can be opened, navigated, and closed without pointer hover.
+- Hover never steals focus, while an explicit Pill click transfers focus and
+  keeps the Expanded View open for keyboard navigation.
 - Escape behavior and focus restoration are consistent from anywhere inside
   the Expanded View.
 - Controls, panels, dates, and Metrics have meaningful accessible names and

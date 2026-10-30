@@ -41,7 +41,7 @@ export interface IslandOptions {
  */
 export class Island {
     private readonly _actor: St.BoxLayout;
-    private readonly _pill: St.BoxLayout;
+    private readonly _pill: St.Button;
     private readonly _time: St.Label;
     private readonly _pillMetric: St.Label;
     private readonly _details: St.BoxLayout;
@@ -53,13 +53,15 @@ export class Island {
     private _expanded = false;
     /** Keeps a keyboard-opened Island expanded while focus moves within it. */
     private _keyboardOpen = false;
+    /** Keeps an explicitly clicked Island open after the pointer leaves. */
+    private _clickOpen = false;
     /** True from the start of a collapse animation until it finishes. */
     private _collapsing = false;
     /** Height of the collapsed Island, border included. */
     private _collapsedHeight = 0;
     private _expandTimeoutId = 0;
     private _signalIds: number[] = [];
-    private _pillKeyPressId = 0;
+    private _pillSignalIds: number[] = [];
     private _stageKeyFocusChangedId = 0;
     private _monitorsChangedId = 0;
 
@@ -78,18 +80,24 @@ export class Island {
             y_align: Clutter.ActorAlign.CENTER,
         });
 
-        this._pill = new St.BoxLayout({
+        const pillContent = new St.BoxLayout({
+            style_class: 'dynamic-island-pill-content',
+            x_expand: true,
+            x_align: Clutter.ActorAlign.CENTER,
+        });
+        pillContent.add_child(this._time);
+        pillContent.add_child(separator);
+        pillContent.add_child(this._pillMetric);
+
+        this._pill = new St.Button({
             style_class: 'dynamic-island-pill',
             accessible_name: 'Dynamic Island',
             accessible_role: Atk.Role.PUSH_BUTTON,
             can_focus: true,
-            reactive: true,
+            child: pillContent,
             x_expand: true,
             x_align: Clutter.ActorAlign.CENTER,
         });
-        this._pill.add_child(this._time);
-        this._pill.add_child(separator);
-        this._pill.add_child(this._pillMetric);
 
         this._details = new St.BoxLayout({
             style_class: 'dynamic-island-details',
@@ -153,8 +161,11 @@ export class Island {
             this._actor.connect('key-press-event',
                 (_actor, event) => this._onIslandKeyPress(event)),
         );
-        this._pillKeyPressId = this._pill.connect('key-press-event',
-            (_actor, event) => this._onPillKeyPress(event));
+        this._pillSignalIds.push(
+            this._pill.connect('key-press-event',
+                (_actor, event) => this._onPillKeyPress(event)),
+            this._pill.connect('clicked', () => this._onPillClicked()),
+        );
         this._stageKeyFocusChangedId = global.stage.connect(
             'notify::key-focus',
             () => this._onKeyFocusChanged(),
@@ -224,10 +235,9 @@ export class Island {
         for (const id of this._signalIds)
             this._actor.disconnect(id);
         this._signalIds = [];
-        if (this._pillKeyPressId) {
-            this._pill.disconnect(this._pillKeyPressId);
-            this._pillKeyPressId = 0;
-        }
+        for (const id of this._pillSignalIds)
+            this._pill.disconnect(id);
+        this._pillSignalIds = [];
         if (this._stageKeyFocusChangedId) {
             global.stage.disconnect(this._stageKeyFocusChangedId);
             this._stageKeyFocusChangedId = 0;
@@ -279,9 +289,25 @@ export class Island {
             }
         } else {
             this._cancelExpandTimeout();
-            if (this._expanded && !this._keyboardOpen)
+            if (this._expanded && !this._keyboardOpen && !this._clickOpen)
                 this._collapse();
         }
+    }
+
+    private _onPillClicked(): void {
+        this._cancelExpandTimeout();
+
+        if (this._clickOpen) {
+            this._clickOpen = false;
+            this._keyboardOpen = false;
+            this._collapse();
+            this._pill.grab_key_focus();
+            return;
+        }
+
+        this._clickOpen = true;
+        this._expand();
+        this._tabs.focusSelected();
     }
 
     private _onPillKeyPress(event: Clutter.Event): boolean {
@@ -306,13 +332,14 @@ export class Island {
 
         this._cancelExpandTimeout();
         this._keyboardOpen = false;
+        this._clickOpen = false;
         this._collapse();
         this._pill.grab_key_focus();
         return Clutter.EVENT_STOP;
     }
 
     private _onKeyFocusChanged(): void {
-        if (!this._keyboardOpen)
+        if (!this._keyboardOpen && !this._clickOpen)
             return;
 
         const focus = global.stage.get_key_focus();
@@ -320,6 +347,7 @@ export class Island {
             return;
 
         this._keyboardOpen = false;
+        this._clickOpen = false;
         if (!this._actor.hover)
             this._collapse();
     }

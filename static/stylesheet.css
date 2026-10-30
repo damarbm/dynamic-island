@@ -17,10 +17,13 @@
 
 .dynamic-island-pill {
   padding: 0 14px;
-  spacing: 8px;
   height: 28px;
   border: 2px solid transparent;
   border-radius: 14px;
+}
+
+.dynamic-island-pill-content {
+  spacing: 8px;
 }
 
 .dynamic-island-pill:focus {
