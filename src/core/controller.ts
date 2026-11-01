@@ -3,6 +3,19 @@ import GLib from 'gi://GLib';
 
 import {RingBuffer} from '../metrics/history.js';
 import {Sampler, type Snapshot} from '../metrics/sampler.js';
+import {
+    isPrayerHighLatitudeRuleId,
+    isPrayerMadhabId,
+    isPrayerMethodId,
+    type PrayerConfig,
+} from '../prayer/config.js';
+import {
+    calculatePrayerSchedule,
+    localDateKey,
+    selectPrayerDisplay,
+    type PrayerSchedule,
+    systemTimeZone,
+} from '../prayer/schedule.js';
 import {Island} from '../ui/island.js';
 import {formatBytes, formatDate, formatPercent, formatSpeed, formatTime} from '../util/format.js';
 
@@ -40,6 +53,10 @@ export class Controller {
     private _timeoutId = 0;
     private _screenSaverSubscription = 0;
     private _settingsChangedId = 0;
+    private _prayerSettingsChangedIds: number[] = [];
+    private _prayerSchedule: PrayerSchedule | null = null;
+    private _tomorrowPrayerSchedule: PrayerSchedule | null = null;
+    private _prayerCacheKey = '';
 
     constructor(private readonly _settings: Gio.Settings) {
         this._island = new Island({
@@ -57,6 +74,20 @@ export class Controller {
         this._render();
 
         this._settingsChangedId = this._settings.connect('changed::pill-metric', () => this._render());
+        const prayerSettingsChanged = () => this._render();
+        for (const key of [
+            'prayer-location-configured',
+            'prayer-location-name',
+            'prayer-latitude',
+            'prayer-longitude',
+            'prayer-calculation-method',
+            'prayer-madhab',
+            'prayer-high-latitude-rule',
+        ]) {
+            this._prayerSettingsChangedIds.push(
+                this._settings.connect(`changed::${key}`, prayerSettingsChanged),
+            );
+        }
         this._screenSaverSubscription = Gio.DBus.session.signal_subscribe(
             null,
             'org.gnome.ScreenSaver',
@@ -86,6 +117,9 @@ export class Controller {
             this._settings.disconnect(this._settingsChangedId);
             this._settingsChangedId = 0;
         }
+        for (const id of this._prayerSettingsChangedIds)
+            this._settings.disconnect(id);
+        this._prayerSettingsChangedIds = [];
         this._island.destroy();
     }
 
@@ -115,6 +149,7 @@ export class Controller {
         // Rates measured across the time the screen was off would be meaningless.
         this._sampler.resetBaseline();
         this._sampler.sample();
+        this._render();
         this._schedule();
     }
 
@@ -139,6 +174,7 @@ export class Controller {
 
         const now = new Date();
         this._island.setPill(`${formatDate(now)} · ${formatTime(now)}`, this._pillMetricText(s));
+        this._renderPrayer(now);
 
         this._island.setRow('cpu', formatPercent(s.cpuPercent), [
             {values: this._cpu.toArray(), color: CPU_COLOR, fill: true},
@@ -152,6 +188,60 @@ export class Controller {
                 {values: this._down.toArray(), color: DOWN_COLOR, fill: true},
                 {values: this._up.toArray(), color: UP_COLOR, fill: false},
             ]);
+    }
+
+    private _renderPrayer(now: Date): void {
+        const config = this._prayerConfig();
+        const timeZone = systemTimeZone();
+        const cacheKey = JSON.stringify([
+            localDateKey(now),
+            timeZone,
+            config.configured,
+            config.latitude,
+            config.longitude,
+            config.method,
+            config.madhab,
+            config.highLatitudeRule,
+        ]);
+        if (cacheKey !== this._prayerCacheKey) {
+            this._prayerCacheKey = cacheKey;
+            this._prayerSchedule = calculatePrayerSchedule(config, now);
+            const tomorrow = new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate() + 1,
+                12,
+            );
+            this._tomorrowPrayerSchedule = calculatePrayerSchedule(config, tomorrow);
+        }
+        const display = selectPrayerDisplay(
+            this._prayerSchedule,
+            this._tomorrowPrayerSchedule,
+            now,
+        );
+        this._island.setPrayerSchedule(
+            display.schedule,
+            display.nextId,
+            timeZone,
+            now,
+            this._settings.get_string('prayer-location-name'),
+        );
+    }
+
+    private _prayerConfig(): PrayerConfig {
+        const method = this._settings.get_string('prayer-calculation-method');
+        const madhab = this._settings.get_string('prayer-madhab');
+        const highLatitudeRule = this._settings.get_string('prayer-high-latitude-rule');
+        return {
+            configured: this._settings.get_boolean('prayer-location-configured'),
+            latitude: this._settings.get_double('prayer-latitude'),
+            longitude: this._settings.get_double('prayer-longitude'),
+            method: isPrayerMethodId(method) ? method : 'muslim-world-league',
+            madhab: isPrayerMadhabId(madhab) ? madhab : 'shafi',
+            highLatitudeRule: isPrayerHighLatitudeRuleId(highLatitudeRule)
+                ? highLatitudeRule
+                : 'middle-of-night',
+        };
     }
 
     private _pillMetricText(s: Snapshot): string {

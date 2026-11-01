@@ -12,5 +12,65 @@
       <summary>Pill Metric</summary>
       <description>The Metric shown in the collapsed Pill next to the time.</description>
     </key>
+    <key name="prayer-location-configured" type="b">
+      <default>false</default>
+      <summary>Prayer location configured</summary>
+      <description>Whether searched coordinates have been saved for prayer-time calculations.</description>
+    </key>
+    <key name="prayer-location-name" type="s">
+      <default>''</default>
+      <summary>Prayer location name</summary>
+      <description>The Indonesian place label selected from location search.</description>
+    </key>
+    <key name="prayer-latitude" type="d">
+      <range min="-90.0" max="90.0"/>
+      <default>0.0</default>
+      <summary>Prayer latitude</summary>
+      <description>Latitude used for offline prayer-time calculations.</description>
+    </key>
+    <key name="prayer-longitude" type="d">
+      <range min="-180.0" max="180.0"/>
+      <default>0.0</default>
+      <summary>Prayer longitude</summary>
+      <description>Longitude used for offline prayer-time calculations.</description>
+    </key>
+    <key name="prayer-calculation-method" type="s">
+      <choices>
+        <choice value="muslim-world-league"/>
+        <choice value="egyptian"/>
+        <choice value="karachi"/>
+        <choice value="umm-al-qura"/>
+        <choice value="dubai"/>
+        <choice value="qatar"/>
+        <choice value="kuwait"/>
+        <choice value="moonsighting-committee"/>
+        <choice value="singapore"/>
+        <choice value="turkey"/>
+        <choice value="tehran"/>
+        <choice value="north-america"/>
+      </choices>
+      <default>'muslim-world-league'</default>
+      <summary>Prayer calculation method</summary>
+      <description>Authority preset used for offline prayer-time calculations.</description>
+    </key>
+    <key name="prayer-madhab" type="s">
+      <choices>
+        <choice value="shafi"/>
+        <choice value="hanafi"/>
+      </choices>
+      <default>'shafi'</default>
+      <summary>Prayer madhab</summary>
+      <description>Juristic method used to calculate Asr.</description>
+    </key>
+    <key name="prayer-high-latitude-rule" type="s">
+      <choices>
+        <choice value="middle-of-night"/>
+        <choice value="seventh-of-night"/>
+        <choice value="twilight-angle"/>
+      </choices>
+      <default>'middle-of-night'</default>
+      <summary>Prayer high-latitude rule</summary>
+      <description>Rule used when twilight does not occur normally at high latitudes.</description>
+    </key>
   </schema>
 </schemalist>

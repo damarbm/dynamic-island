@@ -1,13 +1,14 @@
 # Dynamic Island
 
-A GNOME Shell extension that puts a compact widget at the center of the top bar. The collapsed **Pill** shows the date, time and one live system **Metric**. Hover over it and it expands into a tabbed **Expanded View** with system graphs and a calendar.
+A GNOME Shell extension that puts a compact widget at the center of the top bar. The collapsed **Pill** shows the date, time and one live system **Metric**. Hover over it and it expands into a tabbed **Expanded View** with system graphs, a calendar, and offline prayer times.
 
 It is inspired by the Dynamic Island on recent iPhones, and it covers the default clock in the top bar while it is enabled.
 
 ## Features
 
 - **Pill**: shows the date, current time and one Metric (CPU, RAM, or network speed).
-- **Expanded View**: hover for about 300 ms to open System and Calendar tabs. System shows live graphs for CPU usage, RAM usage, and network download/upload speed. Move the pointer away to collapse it.
+- **Expanded View**: hover for about 300 ms to open System, Calendar, and Prayer tabs. System shows live graphs for CPU usage, RAM usage, and network download/upload speed. Move the pointer away to collapse it.
+- **Prayer Times**: search for an Indonesian kecamatan/area once, then calculate Fajr, Sunrise, Dhuhr, Asr, Maghrib, and Isha locally from its saved coordinates and your system time zone.
 - **Rolling History**: the last 2 minutes of samples are recorded in the background, so the graphs are already full when the Expanded View opens.
 - **Choice of Pill Metric**: pick which Metric the Pill shows (network speed by default) from the extension's preferences.
 - **Low overhead**: samples every 2 seconds while collapsed and every second while expanded. Sampling pauses while the screen is locked or blanked.
@@ -63,15 +64,20 @@ Other scripts from `package.json`:
 Open the extension's preferences to change:
 
 - **Pill Metric**: the Metric shown in the Pill next to the time (CPU usage, RAM usage, or Network speed). The default is Network speed.
+- **Prayer Times**: search by kecamatan/area, choose the matching kabupaten/kota and province result, then select the calculation method, Asr method, and high-latitude rule. Search uses OpenStreetMap Nominatim; prayer calculation is offline after selection and does not request location permission.
 
-The setting is stored in the `org.gnome.shell.extensions.dynamic-island` GSettings schema under the key `pill-metric`.
+Settings are stored in the `org.gnome.shell.extensions.dynamic-island` GSettings schema.
+
+Location search data is © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright).
 
 ## How it works
 
 - `src/metrics/sampler.ts` reads `/proc/stat`, `/proc/meminfo`, `/proc/net/route`, and `/proc/net/dev`. CPU and network values are rates, so they are measured as the change since the previous sample.
 - `src/core/controller.ts` owns sampling, the History, and the refresh timer. It also listens for the screen lock signal on the session bus and pauses sampling while the screen is locked.
+- `src/prayer/` adapts the offline Adhan calculator and formats daily schedules in the system time zone.
 - `src/ui/island.ts` draws the Island in the top bar: the Pill, the Expanded View, and their animations.
 - `src/ui/tab-view.ts` provides reusable tab navigation and switches between Expanded View panels.
+- `src/ui/prayer-panel.ts` displays the prayer schedule and next-prayer state.
 - `src/ui/graph.ts` draws the line graphs with Cairo.
 - `src/ui/calendar.ts` draws the month calendar in the Expanded View.
 - `src/metrics/proc.ts` holds the parsers for the `/proc` files. It has no GNOME imports, so it can be unit-tested with plain Node.
@@ -85,6 +91,7 @@ src/                    TypeScript sources
 src/extension.ts        Extension entry point: enable/disable the Controller
 src/core/               Controller: sampling loop, History, refresh timer
 src/metrics/            /proc parsers, Sampler, RingBuffer
+src/prayer/             Offline prayer-time configuration and calculation
 src/ui/                 Island, calendar, and graph actors
 src/util/               Formatting helpers
 src/prefs.ts            Preferences window
@@ -107,4 +114,4 @@ The terms used in this project are defined in [`docs/CONTEXT.md`](docs/CONTEXT.m
 
 ## License
 
-ISC
+ISC. Third-party licenses are listed in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

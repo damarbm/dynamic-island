@@ -18,5 +18,6 @@ await build({
 });
 
 cpSync('static', 'dist', {recursive: true});
+cpSync('THIRD_PARTY_NOTICES.md', 'dist/THIRD_PARTY_NOTICES.md');
 execFileSync('glib-compile-schemas', ['dist/schemas'], {stdio: 'inherit'});
 console.log('Built dist/');

@@ -4,8 +4,10 @@ import GLib from 'gi://GLib';
 import St from 'gi://St';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
+import type {PrayerId, PrayerSchedule} from '../prayer/schedule.js';
 import {Calendar} from './calendar.js';
 import {Graph, type Series} from './graph.js';
+import {PrayerPanel} from './prayer-panel.js';
 import {TabView} from './tab-view.js';
 
 /** How long the pointer must rest on the Pill before the Island expands. */
@@ -47,6 +49,7 @@ export class Island {
     private readonly _details: St.BoxLayout;
     private readonly _metrics: St.BoxLayout;
     private readonly _calendar: Calendar;
+    private readonly _prayer: PrayerPanel;
     private readonly _tabs: TabView;
     private readonly _rows = new Map<RowId, Row>();
 
@@ -107,6 +110,7 @@ export class Island {
         });
 
         this._calendar = new Calendar();
+        this._prayer = new PrayerPanel();
         this._metrics = new St.BoxLayout({
             style_class: 'dynamic-island-metrics',
             vertical: true,
@@ -137,6 +141,12 @@ export class Island {
                 label: 'Calendar',
                 iconName: 'x-office-calendar-symbolic',
                 actor: this._calendar.actor,
+            },
+            {
+                id: 'prayer',
+                label: 'Prayer',
+                iconName: 'weather-clear-night-symbolic',
+                actor: this._prayer.actor,
             },
         ], 'system');
         this._details.add_child(this._tabs.actor);
@@ -226,6 +236,16 @@ export class Island {
         row.value.text = value;
         row.box.accessible_name = `${row.name}: ${value}`;
         row.graph.setSeries(series);
+    }
+
+    setPrayerSchedule(
+        schedule: PrayerSchedule | null,
+        nextId: PrayerId | null,
+        timeZone: string,
+        now: Date,
+        locationName: string,
+    ): void {
+        this._prayer.setSchedule(schedule, nextId, timeZone, now, locationName);
     }
 
     destroy(): void {

@@ -118,6 +118,58 @@
   min-width: 250px;
 }
 
+.dynamic-island-prayer {
+  spacing: 6px;
+  min-width: 250px;
+}
+
+.dynamic-island-prayer-title {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.dynamic-island-prayer-location {
+  color: #ffffff;
+}
+
+.dynamic-island-prayer-date {
+  color: #9b9b9d;
+  padding-bottom: 8px;
+}
+
+.dynamic-island-prayer-setup {
+  spacing: 10px;
+  color: #9b9b9d;
+  padding: 36px 12px;
+}
+
+.dynamic-island-prayer-list {
+  spacing: 4px;
+}
+
+.dynamic-island-prayer-row {
+  spacing: 8px;
+  padding: 7px 9px;
+  border-radius: 9px;
+}
+
+.dynamic-island-prayer-next-label {
+  color: #ffffff;
+  background-color: #7a2b10;
+  border-radius: 8px;
+  padding: 1px 6px;
+  font-size: 0.75em;
+}
+
+.dynamic-island-prayer-time {
+  font-weight: bold;
+  font-feature-settings: "tnum";
+}
+
+.dynamic-island-prayer-next {
+  background-color: rgba(233, 84, 32, 0.16);
+}
+
 .dynamic-island-cal-weekday {
   color: #9b9b9d;
   font-weight: bold;

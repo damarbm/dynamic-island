@@ -1,7 +1,7 @@
 {
   "uuid": "dynamic-island@damar.local",
   "name": "Dynamic Island",
-  "description": "A pill at the center of the top bar showing the time and one system metric. Hover to expand it into CPU, RAM and network graphs.",
+  "description": "A pill at the center of the top bar with system metrics, a calendar, and offline prayer times.",
   "shell-version": ["50"],
   "settings-schema": "org.gnome.shell.extensions.dynamic-island",
   "version": 1
